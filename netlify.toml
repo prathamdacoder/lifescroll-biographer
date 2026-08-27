@@ -1,0 +1,16 @@
+# Netlify hosts the static SPA; point it at the API deployed elsewhere
+# (Vercel / Render / Fly) by setting API_ORIGIN below.
+[build]
+  publish = "frontend"
+  command = "echo 'static build'"
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://YOUR-API-HOST/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
