@@ -7,8 +7,10 @@ import unittest
 os.environ.setdefault("DATA_DIR", tempfile.mkdtemp(prefix="lifescroll-test-"))
 os.environ.setdefault("SECRET_KEY", "test-secret")
 
+from unittest import mock  # noqa: E402
+
 from backend import app as flask_app  # noqa: E402
-from backend import biographer, interview  # noqa: E402
+from backend import biographer, config, groq_client, interview  # noqa: E402
 
 EMAIL = "smoke@example.com"
 PASSWORD = "supersecret123"
@@ -95,6 +97,48 @@ class Smoke(unittest.TestCase):
 
         self.assertTrue(self.client.delete(f"/api/biographies/{bio_id}",
                                            headers=auth).get_json()["deleted"])
+
+    def test_default_model_is_qwen(self):
+        self.assertEqual(config.GROQ_MODEL, "qwen/qwen3.6-27b")
+        self.assertIn("qwen/qwen3.6-27b", config.GROQ_FALLBACK_MODELS)
+
+    def test_model_fallback_and_reasoning_strip(self):
+        """A decommissioned primary model must fall through to the next one."""
+        calls = []
+
+        class Resp:
+            def __init__(self, status, payload=None, text=""):
+                self.status_code, self._payload, self.text = status, payload, text
+
+            def json(self):
+                return self._payload
+
+        def fake_post(url, headers=None, json=None, timeout=None):
+            calls.append(json["model"])
+            if json["model"] == "qwen/qwen3.6-27b":
+                return Resp(404, text='{"error":{"code":"model_not_found",'
+                                      '"message":"model has been decommissioned"}}')
+            return Resp(200, {"choices": [{"message": {
+                "content": "<think>plotting the chapter</think>The kettle went on at six."}}]})
+
+        with mock.patch.object(groq_client.config, "GROQ_API_KEY", "gsk_test"), \
+                mock.patch.object(groq_client.requests, "post", fake_post):
+            groq_client._active = None
+            groq_client._dead.clear()
+            out = groq_client.chat([{"role": "user", "content": "hi"}])
+
+        self.assertEqual(out, "The kettle went on at six.")     # reasoning stripped
+        self.assertEqual(calls[0], "qwen/qwen3.6-27b")          # tried the default first
+        self.assertEqual(groq_client.active_model(), "openai/gpt-oss-120b")
+        groq_client._active = None
+        groq_client._dead.clear()
+
+    def test_reasoning_params_sent_for_qwen(self):
+        body = groq_client._payload("qwen/qwen3.6-27b", [], 0.7, 100, False)
+        self.assertEqual(body["reasoning_effort"], "none")
+        self.assertEqual(body["reasoning_format"], "hidden")
+        self.assertNotIn("reasoning_effort",
+                         groq_client._payload("llama-3.1-8b-instant", [], 0.7, 100, False))
 
     def test_no_hardcoded_secret(self):
         import pathlib

@@ -221,7 +221,7 @@ def generate(bio_id: str, transcript: str, subject_hint: str = "") -> None:
             "subtitle": plan.get("subtitle", ""),
             "dedication": plan.get("dedication", ""),
             "demo": not live,
-            "model": config.GROQ_MODEL if live else "demo-writer",
+            "model": groq_client.active_model() if live else "demo-writer",
             "chapters": [{"number": c["number"], "title": c["title"], "era": c.get("era", ""),
                           "summary": c.get("summary", ""), "text": "", "images": [],
                           "status": "pending"}

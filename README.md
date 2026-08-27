@@ -3,7 +3,7 @@
 **Talk for fifteen minutes. Get a 50-page illustrated biography.**
 
 Lifescroll interviews you out loud in the browser, transcribes you with the Web Speech
-API, and uses **Groq (Llama 3.3 70B)** to ghostwrite a twelve-chapter memoir in your own
+API, and uses **Groq (Qwen3.6 27B)** to ghostwrite a twelve-chapter memoir in your own
 voice — then illustrates every chapter and typesets the whole thing as a printable PDF.
 
 ---
@@ -15,7 +15,7 @@ voice — then illustrates every chapter and typesets the whole thing as a print
 | **Sign in** | Supabase Auth (email/password **+ Google OAuth**) when configured; a local JWT + SQLite fallback so it runs with zero setup |
 | **15-minute interview** | 12-question spine with a live timer, plus **AI follow-up questions** generated from what you actually said |
 | **Voice input** | Web Speech API dictation (continuous, interim results) with typing as a fallback |
-| **Biography** | 12 chapters × ~2,100 words ≈ **50 printed pages**, drafted 3-at-a-time in parallel on Groq |
+| **Biography** | 12 chapters × ~2,100 words ≈ **50 printed pages**, drafted 3-at-a-time in parallel on Groq (`qwen/qwen3.6-27b`, auto-fallback if unavailable) |
 | **Illustrations** | 6 (configurable 5–10) art-directed images per chapter — **72 total** — via Pollinations (free, keyless) or DALL·E 3 |
 | **PDF export** | A5 book typeset with ReportLab: title page, dedication, contents, drop caps, plates + captions, page numbers |
 | **Library** | Every book saved per user, resumable progress, delete |
@@ -44,7 +44,9 @@ enforces it).
 | Variable | Required | Notes |
 |---|---|---|
 | `GROQ_API_KEY` | yes (for real books) | from console.groq.com |
-| `GROQ_MODEL` | no | default `llama-3.3-70b-versatile` |
+| `GROQ_MODEL` | no | default `qwen/qwen3.6-27b` |
+| `GROQ_FALLBACK_MODELS` | no | comma-separated; tried in order if the primary model is decommissioned |
+| `GROQ_REASONING_EFFORT` | no | `none` (default), `low`, `medium`, `high` — for Qwen3.6 / gpt-oss reasoning models |
 | `SUPABASE_URL` / `SUPABASE_ANON_KEY` | no | enables Supabase Auth + Google OAuth |
 | `SUPABASE_SERVICE_ROLE_KEY` | no | mirrors biographies into Postgres |
 | `IMAGE_PROVIDER` | no | `pollinations` (default, keyless) or `openai` |
