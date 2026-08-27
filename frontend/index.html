@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lifescroll — your life, written as a book</title>
+<meta name="description" content="Talk for fifteen minutes. Lifescroll turns your story into an illustrated 50-page biography you can hold." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📜</text></svg>">
+</head>
+<body>
+
+<header class="topbar" id="topbar">
+  <a class="brand" href="#" data-nav="landing">
+    <span class="brand-mark">📜</span>
+    <span>Lifescroll</span>
+  </a>
+  <nav class="topnav">
+    <span class="pill" id="modelPill" hidden></span>
+    <button class="ghost" data-nav="library" id="navLibrary" hidden>My books</button>
+    <button class="ghost" id="navSignOut" hidden>Sign out</button>
+    <button class="primary sm" data-nav="auth" id="navSignIn">Sign in</button>
+  </nav>
+</header>
+
+<main id="app">
+
+  <!-- ------------------------------------------------------- LANDING -->
+  <section class="view" id="view-landing">
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Fifteen minutes of talking. One book.</p>
+        <h1>Everyone has a<br /><em>book</em> in them.</h1>
+        <p class="lede">
+          Lifescroll interviews you out loud, listens to every detour, and writes a
+          50-page illustrated biography in your own voice — chapters, scenes,
+          artwork and all. Export it as a PDF and print it for the people who'll
+          want it after you.
+        </p>
+        <div class="cta-row">
+          <button class="primary" data-nav="auth">Start my biography</button>
+          <button class="ghost" id="demoBtn">See a sample chapter</button>
+        </div>
+        <ul class="trust">
+          <li><b>~15 min</b> guided interview</li>
+          <li><b>12</b> chapters, ≈50 pages</li>
+          <li><b>72</b> generated illustrations</li>
+        </ul>
+      </div>
+      <div class="hero-book" aria-hidden="true">
+        <div class="book">
+          <div class="book-spine"></div>
+          <div class="book-face">
+            <p class="book-eyebrow">A LIFESCROLL BIOGRAPHY</p>
+            <h2>The Long Way Home</h2>
+            <p class="book-sub">A life told out loud</p>
+            <div class="book-rule"></div>
+            <p class="book-foot">Chapter one — the kitchen, 6 a.m.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="steps">
+      <article><span>01</span><h3>Talk</h3><p>Answer twelve questions by voice or keyboard. The interviewer follows up on whatever you say.</p></article>
+      <article><span>02</span><h3>Write</h3><p>Qwen3.6 27B on Groq drafts every chapter in parallel — a whole book in minutes, not months.</p></article>
+      <article><span>03</span><h3>Illustrate</h3><p>Five to ten period-accurate images per chapter, art-directed from your own scenes.</p></article>
+      <article><span>04</span><h3>Print</h3><p>Download a typeset A5 PDF with a title page, contents, plates and captions.</p></article>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------- AUTH -->
+  <section class="view" id="view-auth" hidden>
+    <div class="card auth-card">
+      <h2 id="authTitle">Welcome back</h2>
+      <p class="muted" id="authSub">Sign in to keep writing your book.</p>
+      <div id="oauthWrap" hidden>
+        <button class="oauth" id="googleBtn">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#4285F4" d="M23 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.2a5.3 5.3 0 0 1-2.3 3.5v2.9h3.7c2.2-2 3.4-5 3.4-8.6z"/><path fill="#34A853" d="M12 24c3.1 0 5.7-1 7.6-2.8l-3.7-2.9c-1 .7-2.3 1.1-3.9 1.1-3 0-5.5-2-6.4-4.7H1.8v3A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.6 14.7a7.2 7.2 0 0 1 0-4.6v-3H1.8a12 12 0 0 0 0 10.6l3.8-3z"/><path fill="#EA4335" d="M12 4.8c1.7 0 3.2.6 4.4 1.7l3.3-3.3A11.6 11.6 0 0 0 12 0 12 12 0 0 0 1.8 6.1l3.8 3C6.5 6.7 9 4.8 12 4.8z"/></svg>
+          Continue with Google
+        </button>
+        <div class="divider"><span>or</span></div>
+      </div>
+      <form id="authForm" novalidate>
+        <label class="field" id="nameField" hidden>
+          <span>Your name</span>
+          <input type="text" id="authName" autocomplete="name" placeholder="Ada Lovelace" />
+        </label>
+        <label class="field">
+          <span>Email</span>
+          <input type="email" id="authEmail" autocomplete="email" required placeholder="you@example.com" />
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <input type="password" id="authPassword" autocomplete="current-password" required minlength="8" placeholder="At least 8 characters" />
+        </label>
+        <p class="error" id="authError" hidden></p>
+        <button class="primary wide" type="submit" id="authSubmit">Sign in</button>
+      </form>
+      <p class="muted small switch">
+        <span id="switchText">New here?</span>
+        <button class="link" id="authSwitch">Create an account</button>
+      </p>
+    </div>
+  </section>
+
+  <!-- ----------------------------------------------------- INTERVIEW -->
+  <section class="view" id="view-interview" hidden>
+    <div class="interview">
+      <aside class="interview-side">
+        <div class="timer-block">
+          <p class="label">Interview time</p>
+          <p class="timer" id="timer">00:00</p>
+          <div class="bar"><div class="bar-fill" id="timeBar"></div></div>
+          <p class="muted small" id="timeHint">Aim for about 15 minutes.</p>
+        </div>
+        <ol class="qlist" id="qlist"></ol>
+      </aside>
+
+      <div class="interview-main">
+        <p class="eyebrow" id="qCounter">Question 1 of 12</p>
+        <h2 class="question" id="questionText">Loading your interview…</h2>
+        <p class="followup" id="followupNote" hidden></p>
+
+        <div class="answer-wrap">
+          <textarea id="answerBox" rows="9" placeholder="Speak or type. Ramble — detours are where the good stuff lives."></textarea>
+          <div class="mic-row">
+            <button class="mic" id="micBtn" title="Hold a conversation out loud">
+              <span class="mic-dot"></span><span id="micLabel">Start talking</span>
+            </button>
+            <span class="muted small" id="micStatus">Web Speech API · Chrome & Edge</span>
+            <span class="spacer"></span>
+            <span class="muted small" id="wordCount">0 words</span>
+          </div>
+        </div>
+
+        <div class="interview-actions">
+          <button class="ghost" id="prevBtn">Back</button>
+          <button class="ghost" id="skipBtn">Skip</button>
+          <button class="primary" id="nextBtn">Save & continue</button>
+        </div>
+
+        <div class="finish-strip">
+          <div>
+            <b id="answeredCount">0</b> answers · <b id="totalWords">0</b> words captured
+            <p class="muted small">You can finish any time — more detail means a richer book.</p>
+          </div>
+          <button class="accent" id="finishBtn">Write my biography →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------- GENERATING -->
+  <section class="view" id="view-generating" hidden>
+    <div class="card generating">
+      <div class="quill">✍️</div>
+      <h2 id="genTitle">Writing your book…</h2>
+      <p class="muted" id="genStage">Reading your interview…</p>
+      <div class="bar big"><div class="bar-fill" id="genBar"></div></div>
+      <p class="pct" id="genPct">0%</p>
+      <ul class="gen-log" id="genLog"></ul>
+      <p class="muted small">Twelve chapters are drafted in parallel on Groq. This usually
+        takes two to four minutes; you can leave and come back from <b>My books</b>.</p>
+      <button class="ghost sm" data-nav="library">Go to my books</button>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------- BOOK -->
+  <section class="view wide" id="view-book" hidden>
+    <div class="book-head">
+      <div>
+        <p class="eyebrow" id="bookMeta">A Lifescroll biography</p>
+        <h1 id="bookTitle">Untitled</h1>
+        <p class="lede" id="bookSubtitle"></p>
+      </div>
+      <div class="book-actions">
+        <button class="ghost sm" data-nav="library">My books</button>
+        <button class="primary" id="pdfBtn">Download PDF</button>
+      </div>
+    </div>
+    <p class="demo-note" id="demoNote" hidden>
+      Demo draft — no <code>GROQ_API_KEY</code> is configured, so the prose is placeholder text.
+      Add the key and regenerate for the real thing.
+    </p>
+    <div class="reader">
+      <nav class="toc" id="toc"></nav>
+      <article class="pages" id="pages"></article>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------- LIBRARY -->
+  <section class="view" id="view-library" hidden>
+    <div class="lib-head">
+      <h1>My books</h1>
+      <button class="primary" id="newBookBtn">Start a new biography</button>
+    </div>
+    <div class="lib-grid" id="libGrid"></div>
+    <p class="muted" id="libEmpty" hidden>No books yet. Your first interview takes fifteen minutes.</p>
+  </section>
+
+</main>
+
+<div class="toast" id="toast" hidden></div>
+<footer class="foot">
+  <span>Lifescroll · Groq · Web Speech API · Supabase</span>
+  <span id="footStatus"></span>
+</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>
